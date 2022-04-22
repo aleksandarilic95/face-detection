@@ -1,0 +1,6 @@
+DATASET:
+  ROOT: data/widerface
+  SHUFFLE: True
+  NUM_WORKERS: 4
+TRAINER:
+  BATCH_SIZE: 16
