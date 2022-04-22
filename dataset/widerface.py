@@ -1,5 +1,6 @@
 from torchvision.datasets import WIDERFace
 from torch.utils.data import Dataset, DataLoader
+import torch
 
 def get_widerface_trainval(root,
                        download = False,
@@ -37,7 +38,8 @@ def get_dataloader(dataset,
     return DataLoader(dataset = dataset,
                       batch_size = batch_size,
                       shuffle = shuffle,
-                      num_workers = num_workers)
+                      num_workers = num_workers,
+                      collate_fn = detection_collate)
 
 def get_dataset(root,
                 split = 'train',
@@ -49,4 +51,12 @@ def get_dataset(root,
                      transform = transform,
                      target_transform = target_transform,
                      download = download)
+
+def detection_collate(batch):
+    targets = []
+    imgs = []
+    for sample in batch:
+        imgs.append(sample[0])
+        targets.append(torch.LongTensor(sample[1]['bbox']))
+    return torch.stack(imgs, 0), targets
 
