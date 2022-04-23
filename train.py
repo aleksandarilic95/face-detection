@@ -34,24 +34,33 @@ if __name__ == '__main__':
     logger.log_info('Loading WIDERFace dataset.')
     widerface_trainval = get_widerface_trainval(
         config['DATALOADER'],
-        transform = None,
-        target_transform = None
+        transform = data_transforms
     )
 
     logger.log_info('Loading Faster-RCNN-Resnet50-FPN.')
     cfg_model = config['MODEL']
-    model = torchvision.models.detection.fasterrcnn_resnet50_fpn(pretrained = cfg_model['PRETRAINED'], num_classes = cfg_model['NUM_CLASSES'])
+    model = torchvision.models.detection.fasterrcnn_resnet50_fpn(
+        pretrained = cfg_model['PRETRAINED'], 
+        num_classes = cfg_model['NUM_CLASSES']
+    )
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     logger.log_info('Using {} as device.'.format(device))
 
     logger.log_info('Loading Adam optimizer.')
     cfg_optim = config['OPTIMIZER']
-    optim = torch.optim.Adam(model.parameters(), lr = cfg_optim['LEARNING_RATE'])
+    optim = torch.optim.Adam(
+        model.parameters(), 
+        lr = cfg_optim['LEARNING_RATE']
+    )
 
     logger.log_info('Loading MultiStep Learning Rate Scheduler.')
     cfg_scheduler = config['LR_SCHEDULER']
-    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(optim, milestones = cfg_scheduler['MILESTONES'], gamma = cfg_scheduler['GAMMA']) 
+    lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(
+        optim, 
+        milestones = cfg_scheduler['MILESTONES'], 
+        gamma = cfg_scheduler['GAMMA']
+    ) 
 
     logger.log_info('Loading Trainer.')
     cfg_trainer = config['TRAINER']
@@ -64,4 +73,5 @@ if __name__ == '__main__':
         lr_scheduler = lr_scheduler
     )
 
+    logger.log_info('Strating training.')
     trainer.train()
