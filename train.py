@@ -1,9 +1,10 @@
+import torch
+import torchvision
+from torchvision import transforms
+
 from dataset.widerface import get_widerface_trainval
 from logger.default import Logger
-from torchvision import transforms
 from trainer.default import Trainer
-import torchvision
-import torch
 
 import yaml
 import argparse
