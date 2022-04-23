@@ -33,8 +33,9 @@ if __name__ == '__main__':
     ])
 
     logger.log_info('Loading WIDERFace dataset.')
+    cfg_dataloader = config['DATALOADER']
     widerface_trainval = get_widerface_trainval(
-        config['DATALOADER'],
+        cfg_dataloader,
         transform = data_transforms
     )
 
