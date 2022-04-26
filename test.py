@@ -16,7 +16,7 @@ torch.cuda.manual_seed(42)
 torch.multiprocessing.set_sharing_strategy('file_system')
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description = "Training a face detection Faster-RCNN network on WIDERFace dataset.")
+    parser = argparse.ArgumentParser(description = "Testing a face detection Faster-RCNN network on WIDERFace dataset.")
 
     parser.add_argument('--config', type = str, help = 'Path to the training configuration file.', required = True)
     parser.add_argument('--model-path', type = str, help = 'Path to the model file.', required = True)
