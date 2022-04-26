@@ -82,25 +82,28 @@ class Trainer:
                 inputs, targets = self.transform_input_target(inputs, targets)
 
                 outputs = self.model(inputs)
-
+                
                 # Filter predictions that pass the score threshold
                 if len(outputs[0]['scores']) > 0:
-                    keep_indexes = torchvision.ops.nms(outputs[0]['boxes'], outputs[0]['scores'], self.nms_threshold)
-                    for index in keep_indexes:
-                        if len(outputs[0]['scores']) and outputs[0]['scores'][index] > self.score_threshold:
-                            pred_box = [train_idx, outputs[0]['labels'][index], outputs[0]['scores'][index]] + outputs[0]['boxes'][index].tolist()
-                            pred_boxes.append(pred_box)
+                    pred_boxes += [
+                        [train_idx, outputs[0]['labels'][index], outputs[0]['scores'][index]] + outputs[0]['boxes'][index].tolist()
+                        for index in torchvision.ops.nms(outputs[0]['boxes'], outputs[0]['scores'], self.nms_threshold) 
+                        if outputs[0]['scores'][index] > self.score_threshold
+                    ]
+                
+                for target in targets:
+                    gt_boxes += [
+                        [train_idx, 1, 1] + box.tolist()
+                        for box in target['boxes']
+                    ]
+                    # for i in range(len(targets)):
+                    #     for j in range(len(targets[i]['boxes'])):
+                    #         gt_box = [train_idx, 1, 1] + targets[i]['boxes'][j].tolist()
+                    #         gt_boxes.append(gt_box)
 
-                    for i in range(len(targets)):
-                        for j in range(len(targets[i]['boxes'])):
-                            gt_box = [train_idx, 1, 1] + targets[i]['boxes'][j].tolist()
-                            gt_boxes.append(gt_box)
-
-                    train_idx += 1
-
-        scores = []
-        for threshold in self.thresholds:
-            scores.append(mean_average_precision(pred_boxes, gt_boxes, iou_threshold = threshold, num_classes = 2))
+                train_idx += 1
+                
+        scores = [mean_average_precision(pred_boxes, gt_boxes, iou_threshold = threshold, num_classes = 2) for threshold in self.thresholds]
         mAP = sum(scores) / len(scores)
         
         return mAP
