@@ -21,7 +21,6 @@ class Trainer:
         self.num_of_epochs = self.config['NUM_OF_EPOCHS']
         self.score_threshold = self.config['SCORE_THRESHOLD']
         self.nms_threshold = self.config['NMS_THRESHOLD']
-        self.batch_size = self.config['BATCH_SIZE']
 
     def transform_input_target(self, inputs, targets):
         inputs = [input_.to(self.device) for input_ in inputs]
