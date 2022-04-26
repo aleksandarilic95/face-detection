@@ -1,4 +1,5 @@
 import torch
+import torch.multiprocessing
 import torchvision
 from torchvision import transforms
 
@@ -12,6 +13,7 @@ import argparse
 torch.backends.cudnn.benchmark = True
 torch.manual_seed(42)
 torch.cuda.manual_seed(42)
+torch.multiprocessing.set_sharing_strategy('file_system')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description = "Training a face detection Faster-RCNN network on WIDERFace dataset.")
@@ -72,7 +74,8 @@ if __name__ == '__main__':
         model = model,
         trainval_dataloaders = widerface_trainval,
         optimizer = optim,
-        lr_scheduler = lr_scheduler
+        lr_scheduler = lr_scheduler,
+        logger = logger
     )
 
     logger.log_info('Strating training.')
