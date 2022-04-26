@@ -2,6 +2,7 @@
 
 Face detection model trained on WIDERFace dataset.
 Dataset will automatically download to data/widerface.
+If it doesn't download, download the dataset [here](http://shuoyang1213.me/WIDERFACE/).
 
 To train the network, run:
 
