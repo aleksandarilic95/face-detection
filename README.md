@@ -1,0 +1,18 @@
+# face-detection
+
+Face detection model trained on WIDERFace dataset.
+Dataset will automatically download to data/widerface.
+
+To train the network, run:
+
+    python3 train.py --config config/base.yaml
+    
+To test the network, run:
+
+    python3 test.py --config config/base.yaml --model-path /path/to/model.pt
+    
+To inference a single image, run:
+
+    python3 inference.py --config config/base.yaml --model-path /path/to/model.pt --image-path samples/test1.jpg
+    
+Inference results will be saved to inference/
