@@ -18,3 +18,7 @@ To inference a single image, run:
 Inference results will be saved to inference/
 
 Pretrained model (0.3mAP): [model.pt](https://drive.google.com/file/d/14rfK23pBHUbTWL0OkZ98dYErWbaLfZy8/view?usp=sharing)
+
+Examples:
+[test1.jpg](inference/inference_test1.jpg)
+[test2.jpg](inference/inference_test2.jpg)
