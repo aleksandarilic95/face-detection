@@ -16,3 +16,5 @@ To inference a single image, run:
     python3 inference.py --config config/base.yaml --model-path /path/to/model.pt --image-path samples/test1.jpg
     
 Inference results will be saved to inference/
+
+Pretrained model (0.3mAP): [model.pt](https://drive.google.com/file/d/14rfK23pBHUbTWL0OkZ98dYErWbaLfZy8/view?usp=sharing)
