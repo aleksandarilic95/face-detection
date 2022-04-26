@@ -1,6 +1,6 @@
 from logger.default import Logger
 import torch
-from metrics.map import mean_average_precision
+from metrics.default import mean_average_precision
 import torchvision
 
 class Trainer:
