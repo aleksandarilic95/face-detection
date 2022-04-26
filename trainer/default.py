@@ -29,9 +29,15 @@ class Trainer:
         labels = []
         for i in range(len(inputs)):
             d = {}
+
+            # Ground truth objects come in form of 
+            # (x1, y1, w, h) and we want them in 
+            # form of (x1, y1, x2, y2)
             targets[i][:,2:4] += targets[i][:,0:2]
+
             d['boxes'] = targets[i].to(self.device)
             d['labels'] = torch.ones(targets[i].shape[0], dtype = torch.int64).to(self.device)
+
             labels.append(d)
 
         return inputs, labels
@@ -42,6 +48,9 @@ class Trainer:
         loss = None
         
         for inputs, targets in self.train_dataloader:
+            # Since we're filtering inputs that don't
+            # have 2 or 3 detections, we want to skip
+            # the ones that come back empty
             if len(inputs) == 0:
                 continue
 
@@ -50,9 +59,6 @@ class Trainer:
             loss = sum(loss for loss in loss_dict.values()).to("cpu")
 
             loss.backward(retain_graph = True)
-            # print(f'Memory cached: {torch.cuda.memory_cached() / 1024 ** 2}')
-            # print(f'Memory cached: {torch.cuda.memory_cached() / 1024 ** 2}')
-
             
             self.logger.add_scalar('train_loss', loss.item(), global_step = self.iter)
             self.logger.log_info('Iter {} train loss: {}'.format(self.iter, loss.item()))
@@ -63,7 +69,6 @@ class Trainer:
             self.iter += 1
 
     def valid_epoch(self):
-        print("In valid epoch")
         self.model.eval()
 
         gt_boxes = []
@@ -79,6 +84,7 @@ class Trainer:
 
                 outputs = self.model(inputs)
 
+                # Filter predictions that pass the score threshold
                 if len(outputs[0]['scores']) > 0:
                     keep_indexes = torchvision.ops.nms(outputs[0]['boxes'], outputs[0]['scores'], self.nms_threshold)
                     for index in keep_indexes:
@@ -92,6 +98,7 @@ class Trainer:
                             gt_boxes.append(gt_box)
 
                     train_idx += 1
+
         scores = []
         for threshold in self.thresholds:
             scores.append(mean_average_precision(pred_boxes, gt_boxes, iou_threshold = threshold, num_classes = 2))
@@ -99,11 +106,11 @@ class Trainer:
         
         return mAP
 
-
     def train(self):
         for epoch in range(self.num_of_epochs):
             self.logger.log_info('Starting training of epoch {}.'.format(epoch))
             self.train_epoch()
+            self.logger.log_info('Entering evaluation for epoch {}'.format(epoch))
             mAP = self.valid_epoch()
             self.logger.log_info('Epoch {}: mAP @ 0.5:0.95:0.05: {}'.format(epoch, mAP))
-            torch.save(self.model.state_dict(), 'out/model.pt')
+            torch.save(self.model.state_dict(), 'out/model{}.pt'.format(epoch))
