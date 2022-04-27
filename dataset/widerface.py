@@ -78,7 +78,7 @@ def detection_collate(batch):
         # Since this is a big dataset, we're
         # only working with samples that have
         # 2 or 3 detections.
-        if sample[1]['bbox'].shape[0] in [2,3]:
+        if sample[1]['bbox'].shape[0] not in [2,3]:
             continue
 
         # There are some errors in the dataset,
